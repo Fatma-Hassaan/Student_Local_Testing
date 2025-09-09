@@ -60,8 +60,8 @@ class simpleClass():
 def find_dataset_statistics(dataset: pd.DataFrame, label_col: str) -> tuple[int, int, int, int, int]:
     n_records = len(dataset)
     n_columns = len(dataset.columns)
-    n_negative = (dataset[label_col] == 0).sum()
-    n_positive = (dataset[label_col] == 1).sum()
-    perc_positive = int((n_positive / n_records) * 100)  # Truncate decimal part
+    n_negative = int((dataset[label_col] == 0).sum())  # Convert to Python int
+    n_positive = int((dataset[label_col] == 1).sum())  # Convert to Python int
+    perc_positive = int((n_positive / n_records) * 100)  # This is already an int
 
     return n_records, n_columns, n_negative, n_positive, perc_positive
