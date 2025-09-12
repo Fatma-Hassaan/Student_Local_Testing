@@ -1,9 +1,8 @@
-import numpy as np
 import pandas as pd
-import sklearn.preprocessing
-import sklearn.decomposition
-import sklearn.model_selection
+import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
+from sklearn.decomposition import PCA
 
 # def tts(  dataset: pd.DataFrame,
 #                        label_col: str, 
@@ -45,20 +44,53 @@ def tts(
 
 
 class PreprocessDataset:
-    def __init__(self, 
-                 one_hot_encode_cols:list[str],
-                 min_max_scale_cols:list[str],
-                 n_components:int,
-                 feature_engineering_functions:dict
-                 ):
-        # TODO: Add any state variables you may need to make your functions work
-        return
+    # def __init__(self, 
+    #              one_hot_encode_cols:list[str],
+    #              min_max_scale_cols:list[str],
+    #              n_components:int,
+    #              feature_engineering_functions:dict
+    #              ):
+    #     # TOD: Add any state variables you may need to make your functions work
+    #     return
 
-    def one_hot_encode_columns_train(self,train_features:pd.DataFrame) -> pd.DataFrame:
-        # TODO: Read the function description in https://github.gatech.edu/pages/cs6035-tools/cs6035-tools.github.io/Projects/Machine_Learning/Task2.html and implement the function as described
-        one_hot_encoded_dataset = pd.DataFrame()
+    def __init__(self,
+                 one_hot_encode_cols: list[str],
+                 min_max_scale_cols: list[str],
+                 n_components: int,
+                 feature_engineering_functions: dict):
+        # Store inputs as instance variables
+        self.one_hot_encode_cols = one_hot_encode_cols
+        self.min_max_scale_cols = min_max_scale_cols
+        self.n_components = n_components
+        self.feature_engineering_functions = feature_engineering_functions
 
-        return one_hot_encoded_dataset
+        # Initialize encoders/scalers/PCA (will be fitted on training data only)
+        self.ohe_encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+        self.scaler = MinMaxScaler()
+        self.pca = PCA(n_components=self.n_components, random_state=0)
+
+    # def one_hot_encode_columns_train(self,train_features:pd.DataFrame) -> pd.DataFrame:
+    #     # TOD: Read the function description in https://github.gatech.edu/pages/cs6035-tools/cs6035-tools.github.io/Projects/Machine_Learning/Task2.html and implement the function as described
+    #     one_hot_encoded_dataset = pd.DataFrame()
+
+    #     return one_hot_encoded_dataset
+    def one_hot_encode_columns_train(self, train_features: pd.DataFrame) -> pd.DataFrame:
+        # Split into columns to encode and other columns
+        cols_to_encode = train_features[self.one_hot_encode_cols].copy()
+        other_cols = train_features.drop(columns=self.one_hot_encode_cols).copy()
+
+        # Fit OHE on training data
+        ohe_encoded_array = self.ohe_encoder.fit_transform(cols_to_encode)
+
+        # Get new column names: "colname_category"
+        ohe_column_names = self.ohe_encoder.get_feature_names_out(self.one_hot_encode_cols)
+
+        # Create DataFrame with proper column names and index
+        ohe_df = pd.DataFrame(ohe_encoded_array, columns=ohe_column_names, index=train_features.index)
+
+        # Concatenate back with non-encoded columns
+        result = pd.concat([ohe_df, other_cols], axis=1)
+        return result
 
     def one_hot_encode_columns_test(self,test_features:pd.DataFrame) -> pd.DataFrame:
         # TODO: Read the function description in https://github.gatech.edu/pages/cs6035-tools/cs6035-tools.github.io/Projects/Machine_Learning/Task2.html and implement the function as described
