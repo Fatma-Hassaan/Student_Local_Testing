@@ -1,0 +1,11 @@
+,Feature,Importance
+0,android.permission.READ_PHONE_STATE,0.1946
+1,com.google.android.c2dm.permission.RECEIVE,0.1129
+2,android.permission.RECEIVE_BOOT_COMPLETED,0.0991
+3,com.android.launcher.permission.INSTALL_SHORTCUT,0.0929
+4,android.permission.ACCESS_COARSE_LOCATION,0.0848
+5,android.permission.ACCESS_FINE_LOCATION,0.0525
+6,android.permission.SYSTEM_ALERT_WINDOW,0.0468
+7,android.permission.GET_TASKS,0.0446
+8,com.android.vending.BILLING,0.0275
+9,android.permission.WRITE_SETTINGS,0.0234

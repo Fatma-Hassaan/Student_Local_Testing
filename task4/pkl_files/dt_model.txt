@@ -1,0 +1,15 @@
+self.train_accuracy_ans = 0.9328
+self.train_recall_ans = 0.9641
+self.train_precision_ans = 0.9076
+self.train_fscore_ans = 0.935
+self.train_fpr_ans = 0.0986
+self.train_fnr_ans = 0.0359
+self.train_roc_auc_ans = 0.964
+
+self.test_accuracy_ans = 0.9288
+self.test_recall_ans = 0.9616
+self.test_precision_ans = 0.9026
+self.test_fscore_ans = 0.9312
+self.test_fpr_ans = 0.1042
+self.test_fnr_ans = 0.0384
+self.test_roc_auc_ans = 0.9614

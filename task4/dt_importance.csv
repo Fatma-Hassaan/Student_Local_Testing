@@ -1,0 +1,11 @@
+,Feature,Importance
+0,android.permission.READ_PHONE_STATE,0.6146
+1,com.google.android.c2dm.permission.RECEIVE,0.2277
+2,android.permission.RECEIVE_BOOT_COMPLETED,0.0682
+3,android.permission.INTERNET,0.0569
+4,android.permission.SEND_SMS,0.024
+5,com.android.launcher.permission.INSTALL_SHORTCUT,0.0086
+6,android.permission.RESTART_PACKAGES,0.0
+7,android.permission.USE_FINGERPRINT,0.0
+8,android.permission.SET_WALLPAPER_HINTS,0.0
+9,android.permission.SET_WALLPAPER,0.0
