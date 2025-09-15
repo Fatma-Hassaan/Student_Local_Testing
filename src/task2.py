@@ -6,6 +6,7 @@ from sklearn.decomposition import PCA
 
 
 
+
 def tts(
     dataset: pd.DataFrame,
     label_col: str,
@@ -122,60 +123,41 @@ class PreprocessDataset:
         result = pd.concat([scaled_df, other_cols], axis=1)
         return result
     
-    # def pca_train(self,train_features:pd.DataFrame) -> pd.DataFrame:
-    #     # TOO: Read the function description in https://github.gatech.edu/pages/cs6035-tools/cs6035-tools.github.io/Projects/Machine_Learning/Task2.html and implement the function as described
-    #     pca_dataset = pd.DataFrame()
-    #     return pca_dataset
+
+
+
 
     def pca_train(self, train_features: pd.DataFrame) -> pd.DataFrame:
-        # Drop any columns with NA values before PCA (PCA doesn't handle NaN)
-        train_features_clean = train_features.dropna(axis=1)
+        # Step 1: Drop columns with ANY NA values in the TRAINING set
+        self.train_columns_ = train_features.columns  # Save original columns for reference
+        train_clean = train_features.dropna(axis=1)
 
-        # Convert to numpy array for PCA
-        X_pca = train_features_clean.values
+        # Step 2: Store which columns were kept (for use in pca_test)
+        self.pca_columns_ = train_clean.columns.tolist()
 
-        # Fit PCA on training data
-        pca_transformed = self.pca.fit_transform(X_pca)
+        # Step 3: Initialize and fit PCA
+        self.pca = PCA(n_components=self.n_components, random_state=0)
+        pca_result = self.pca.fit_transform(train_clean)
 
-        # Create component column names: component_1, component_2, ...
-        component_names = [f"component_{i+1}" for i in range(self.n_components)]
+        # Step 4: Create DataFrame with correct column names and index
+        column_names = [f"component_{i+1}" for i in range(self.n_components)]
+        pca_df = pd.DataFrame(pca_result, columns=column_names, index=train_features.index)
 
-        # Create DataFrame from PCA output
-        pca_df = pd.DataFrame(pca_transformed, columns=component_names, index=train_features.index)
-
-        # Drop ALL original columns and replace with PCA components
-        result = pd.concat([pca_df, train_features.drop(columns=train_features_clean.columns)], axis=1)
-        return result
-
-    # def pca_test(self,test_features:pd.DataFrame) -> pd.DataFrame:
-    #     # TOD: Read the function description in https://github.gatech.edu/pages/cs6035-tools/cs6035-tools.github.io/Projects/Machine_Learning/Task2.html and implement the function as described
-    #     pca_dataset = pd.DataFrame()
-    #     return pca_dataset
+        return pca_df
 
     def pca_test(self, test_features: pd.DataFrame) -> pd.DataFrame:
-        # Drop any columns with NA values (must match training set's structure)
-        test_features_clean = test_features.dropna(axis=1)
+        # Step 1: Use ONLY the columns that were kept during TRAINING
+        # This ensures feature alignment and avoids "unknown feature" errors
+        test_clean = test_features[self.pca_columns_]
 
-        # Convert to numpy array
-        X_pca = test_features_clean.values
+        # Step 2: Transform using the fitted PCA model
+        pca_result = self.pca.transform(test_clean)
 
-        # Transform using fitted PCA (DO NOT FIT!)
-        pca_transformed = self.pca.transform(X_pca)
+        # Step 3: Create DataFrame with correct column names and index
+        column_names = [f"component_{i+1}" for i in range(self.n_components)]
+        pca_df = pd.DataFrame(pca_result, columns=column_names, index=test_features.index)
 
-        # Create component column names
-        component_names = [f"component_{i+1}" for i in range(self.n_components)]
-
-        # Create DataFrame
-        pca_df = pd.DataFrame(pca_transformed, columns=component_names, index=test_features.index)
-
-        # Replace original columns with PCA components
-        result = pd.concat([pca_df, test_features.drop(columns=test_features_clean.columns)], axis=1)
-        return result
-
-    # def feature_engineering_train(self,train_features:pd.DataFrame) -> pd.DataFrame:
-    #     # TODO: Read the function description in https://github.gatech.edu/pages/cs6035-tools/cs6035-tools.github.io/Projects/Machine_Learning/Task2.html and implement the function as described
-    #     feature_engineered_dataset = pd.DataFrame()
-    #     return feature_engineered_dataset
+        return pca_df
     def feature_engineering_train(self, train_features: pd.DataFrame) -> pd.DataFrame:
         result = train_features.copy()
 
